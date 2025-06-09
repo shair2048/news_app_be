@@ -29,12 +29,13 @@ const createNews = async (req, res) => {
       });
       imageUrl = cloudinary.url(result.public_id, {
         secure: true,
+        sign_url: false,
         transformation: [
           {
             quality: "auto",
             fetch_format: "auto",
           },
-          { width: 800, height: 600, crop: "limit", gravity: "auto" }, // Adjust the width, height, and crop
+          { width: 800, height: 600, crop: "fill", gravity: "auto" }, // Adjust the width, height, and crop
         ],
       });
       // Assign the secure URL to imageUrl
