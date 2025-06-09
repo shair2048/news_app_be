@@ -1,5 +1,8 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const cloudinary = require("cloudinary").v2;
+const fs = require("fs");
+const path = require("path");
 require("dotenv").config();
 
 const app = express();
@@ -9,6 +12,12 @@ const cors = require("cors");
 const authRoute = require("./routes/auth.route");
 const accountRoute = require("./routes/account.route");
 const newsRoute = require("./routes/news.route");
+
+const uploadDir = path.join(__dirname, "uploads");
+
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
 
 const corsOptions = {
   origin: "http://localhost:8081", // Địa chỉ frontend được phép truy cập
@@ -38,3 +47,9 @@ mongoose
   .catch((err) => {
     console.error("Failed to connect to database:", err);
   });
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
