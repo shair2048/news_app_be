@@ -8,6 +8,7 @@ const cors = require("cors");
 
 const authRoute = require("./routes/auth.route");
 const accountRoute = require("./routes/account.route");
+const newsRoute = require("./routes/news.route");
 
 const corsOptions = {
   origin: "http://localhost:8081", // Địa chỉ frontend được phép truy cập
@@ -24,6 +25,7 @@ app.use(cors(corsOptions));
 // routes
 app.use("/api/auth", authRoute);
 app.use("/api/accounts", accountRoute);
+app.use("/api/news", newsRoute);
 
 mongoose
   .connect(process.env.MONGODB_URI)

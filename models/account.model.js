@@ -25,6 +25,12 @@ const accountSchema = new mongoose.Schema(
       required: true,
       minlength: 8,
     },
+    bookmarks: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "News",
+      },
+    ],
     createdAt: {
       type: Date,
       default: Date.now,
