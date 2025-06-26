@@ -1,10 +1,11 @@
-const express = require("express");
-const router = express.Router();
-const multer = require("multer");
-const upload = multer({ dest: "uploads/" });
-const { getNews, createNews } = require("../controllers/news.controller");
+import express from "express";
+import multer from "multer";
+import { getNews, createNews } from "../controllers/news.controller.js";
 
-router.post("/", upload.single("imageUrl"), createNews);
-router.get("/", getNews);
+export const newsRoute = express.Router();
+const upload = multer({
+  dest: "uploads/",
+});
 
-module.exports = router;
+newsRoute.post("/", upload.single("imageUrl"), createNews);
+newsRoute.get("/", getNews);

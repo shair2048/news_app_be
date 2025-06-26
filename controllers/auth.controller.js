@@ -1,16 +1,15 @@
-const bcrypt = require("bcrypt");
-const { generateUniqueUsername } = require("../utils/username.js");
-const Account = require("../models/account.model.js");
-const jwt = require("jsonwebtoken");
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { generateUniqueUsername } from "../utils/username.js";
+import Account from "../models/account.model.js";
 
-const registerUser = async (req, res) => {
+export const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
 
-  if (!name || !email || !password) {
-    return res
-      .status(400)
-      .json({ message: "Name, email and password are required." });
-  }
+  if (!name || !email || !password)
+    return res.status(400).json({
+      message: "Name, email and password are required.",
+    });
 
   try {
     const username = await generateUniqueUsername(name);
@@ -26,53 +25,59 @@ const registerUser = async (req, res) => {
     });
 
     await account.save();
-    res.status(201).json({ message: "Account created successfully." });
-  } catch (error) {
-    console.error("Error creating account:", error);
-    res.status(500).json({ message: "Internal server error." });
+    res.status(201).json({
+      message: "Account created successfully.",
+    });
+  } catch {
+    res.status(500).json({
+      message: "Internal server error.",
+    });
   }
 };
 
-const loginUser = async (req, res) => {
-  console.log("Login request received:", req.body);
+export const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   // console.log("Login request received:", email, password);
-
-  if (!email || !password) {
-    return res
-      .status(400)
-      .json({ message: "Email and password are required." });
-  }
+  if (!email || !password)
+    return res.status(400).json({
+      message: "Email and password are required.",
+    });
 
   try {
     const account = await Account.findOne({
       email,
     });
-    console.log("Account found:", account);
+
     const uid = account._id;
 
-    if (!account) {
-      return res.status(404).json({ message: "Account not found." });
-    }
+    if (!account)
+      return res.status(404).json({
+        message: "Account not found.",
+      });
 
     const isPasswordValid = await bcrypt.compare(password, account.password);
 
-    if (!isPasswordValid) {
-      return res.status(401).json({ message: "Invalid password." });
-    }
+    if (!isPasswordValid)
+      return res.status(401).json({
+        message: "Invalid password.",
+      });
 
-    const token = jwt.sign({ id: uid }, "SECRET_KEY", { expiresIn: "1d" });
+    const token = jwt.sign({ id: uid }, "SECRET_KEY", {
+      expiresIn: "1d",
+    });
 
     res.status(200).json({
       message: "Login successful.",
       token,
-      account: { email: account.email, name: account.name },
+      account: {
+        email: account.email,
+        name: account.name,
+      },
     });
-  } catch (error) {
-    console.error("Error logging in:", error);
-    res.status(500).json({ message: "Internal server error." });
+  } catch {
+    res.status(500).json({
+      message: "Internal server error.",
+    });
   }
 };
-
-module.exports = { registerUser, loginUser };
