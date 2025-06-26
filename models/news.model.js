@@ -21,6 +21,10 @@ const newsSchema = new mongoose.Schema(
     category: {
       type: String,
     },
+    readCount: {
+      type: Number,
+      default: 0,
+    },
     createdAt: {
       type: Date,
       default: Date.now,
