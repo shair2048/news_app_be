@@ -39,7 +39,6 @@ const createNews = async (req, res) => {
         ],
       });
       // Assign the secure URL to imageUrl
-      console.log(result);
     }
 
     const news = new News({
