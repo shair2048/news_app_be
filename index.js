@@ -1,6 +1,5 @@
 import fs from "node:fs";
 import process from "node:process";
-// import { createRequire } from "node:module";
 import express from "express";
 import mongoose from "mongoose";
 import { v2 as cloudinary } from "cloudinary";
@@ -11,15 +10,14 @@ import { accountRoute } from "./routes/account.route.js";
 import { newsRoute } from "./routes/news.route.js";
 import path from "path";
 import { fileURLToPath } from "url";
+import { PORT } from "./configs/env.js";
 
-// __dirname trong ESM
+// __dirname in ESM
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// tạo đường dẫn uploads/
 const uploadDir = path.join(__dirname, "uploads");
 
-const port = 3000;
 const app = express();
 
 if (!fs.existsSync(uploadDir))
@@ -28,9 +26,9 @@ if (!fs.existsSync(uploadDir))
   });
 
 const corsOptions = {
-  origin: "http://localhost:8081", // Địa chỉ frontend được phép truy cập
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Các phương thức HTTP được cho phép
-  allowedHeaders: ["Content-Type", "Authorization"], // Các header được cho phép
+  origin: "http://localhost:8081", // Allowed origin
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allowed request methods
+  allowedHeaders: ["Content-Type", "Authorization"], // Allowed request headers
   credentials: true,
 };
 
@@ -42,6 +40,7 @@ app.use(
   })
 );
 app.use(cors(corsOptions));
+
 // routes
 app.use("/api/auth", authRoute);
 app.use("/api/accounts", accountRoute);
@@ -50,8 +49,8 @@ app.use("/api/news", newsRoute);
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => {
-    app.listen(port, () => {
-      console.log(`Server is running on http://localhost:${port}`);
+    app.listen(PORT, () => {
+      console.log(`Server is running on http://localhost:${PORT}`);
     });
   })
   .catch((err) => {
