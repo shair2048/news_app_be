@@ -1,6 +1,7 @@
 {
   "name": "news_app_be",
   "version": "1.0.0",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -12,6 +13,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@putout/plugin-convert-commonjs-to-esm": "^10.0.1",
     "bcrypt": "^6.0.0",
     "cloudinary": "^2.6.1",
     "cors": "^2.8.5",
@@ -22,5 +24,21 @@
     "mongoose": "^8.15.0",
     "multer": "^2.0.1",
     "nodemon": "^3.1.10"
+  },
+  "putout": {
+    "plugins": [
+      "convert-commonjs-to-esm"
+    ],
+    "rules": {
+      "convert-commonjs-to-esm/require": "on",
+      "convert-commonjs-to-esm/exports": "on",
+      "convert-commonjs-to-esm/commons": "on"
+    },
+    "ignore": [
+      "node_modules",
+      "dist",
+      "build",
+      "*.cjs"
+    ]
   }
 }

@@ -1,23 +1,31 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const cloudinary = require("cloudinary").v2;
-const fs = require("fs");
-const path = require("path");
-require("dotenv").config();
+import fs from "node:fs";
+import process from "node:process";
+// import { createRequire } from "node:module";
+import express from "express";
+import mongoose from "mongoose";
+import { v2 as cloudinary } from "cloudinary";
+import cors from "cors";
+import "dotenv/config";
+import { authRoute } from "./routes/auth.route.js";
+import { accountRoute } from "./routes/account.route.js";
+import { newsRoute } from "./routes/news.route.js";
+import path from "path";
+import { fileURLToPath } from "url";
 
-const app = express();
-const port = 3000;
-const cors = require("cors");
+// __dirname trong ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const authRoute = require("./routes/auth.route");
-const accountRoute = require("./routes/account.route");
-const newsRoute = require("./routes/news.route");
-
+// tạo đường dẫn uploads/
 const uploadDir = path.join(__dirname, "uploads");
 
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
+const port = 3000;
+const app = express();
+
+if (!fs.existsSync(uploadDir))
+  fs.mkdirSync(uploadDir, {
+    recursive: true,
+  });
 
 const corsOptions = {
   origin: "http://localhost:8081", // Địa chỉ frontend được phép truy cập
@@ -28,9 +36,12 @@ const corsOptions = {
 
 // middleware
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(
+  express.urlencoded({
+    extended: false,
+  })
+);
 app.use(cors(corsOptions));
-
 // routes
 app.use("/api/auth", authRoute);
 app.use("/api/accounts", accountRoute);
@@ -39,7 +50,6 @@ app.use("/api/news", newsRoute);
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => {
-    console.log("Connected to database successfully!");
     app.listen(port, () => {
       console.log(`Server is running on http://localhost:${port}`);
     });

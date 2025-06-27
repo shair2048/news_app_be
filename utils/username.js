@@ -1,25 +1,26 @@
-const Account = require("../models/account.model");
+import Account from "../models/account.model.js";
 
-function normalizeName(name) {
+export function normalizeName(name) {
   return name
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/\s+/g, "")
-    .replace(/[^a-z0-9]/g, "");
+    .replace(/[^\da-z]/g, "");
 }
-
-async function generateUniqueUsername(name) {
+export async function generateUniqueUsername(name) {
   const baseUsername = normalizeName(name);
   let username = baseUsername;
   let suffix = 0;
 
-  while (await Account.exists({ username })) {
+  while (
+    await Account.exists({
+      username,
+    })
+  ) {
     suffix++;
     username = baseUsername + suffix;
   }
 
   return username;
 }
-
-module.exports = { normalizeName, generateUniqueUsername };
