@@ -1,7 +1,6 @@
 import fs from "node:fs";
 import process from "node:process";
 import express from "express";
-import mongoose from "mongoose";
 import { v2 as cloudinary } from "cloudinary";
 import cors from "cors";
 import "dotenv/config";
@@ -10,7 +9,8 @@ import { accountRoute } from "./routes/account.routes.js";
 import { newsRoute } from "./routes/news.routes.js";
 import path from "path";
 import { fileURLToPath } from "url";
-import { PORT } from "./configs/env.js";
+import { PORT } from "./config/env.js";
+import { connectDatabase } from "./database/mongodb.js";
 
 // __dirname in ESM
 const __filename = fileURLToPath(import.meta.url);
@@ -46,16 +46,11 @@ app.use("/api/auth", authRoute);
 app.use("/api/accounts", accountRoute);
 app.use("/api/news", newsRoute);
 
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(() => {
-    app.listen(PORT, () => {
-      console.log(`Server is running on http://localhost:${PORT}`);
-    });
-  })
-  .catch((err) => {
-    console.error("Failed to connect to database:", err);
-  });
+app.listen(PORT, async () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+
+  await connectDatabase();
+});
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
