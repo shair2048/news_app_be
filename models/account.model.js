@@ -4,8 +4,10 @@ const accountSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true,
+      required: [true, "Name is required"],
       trim: true,
+      minlength: 2,
+      maxlength: 50,
     },
     username: {
       type: String,
@@ -15,14 +17,18 @@ const accountSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      required: true,
+      required: [true, "Email is required"],
       unique: true,
       trim: true,
       lowercase: true,
+      match: [
+        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+        "Please fill a valid email address",
+      ],
     },
     password: {
       type: String,
-      required: true,
+      required: [true, "Password is required"],
       minlength: 8,
     },
     bookmarks: [
