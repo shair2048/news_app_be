@@ -5,7 +5,7 @@ if (!DB_URI) {
   throw new Error("Database URI is not defined in environment variables");
 }
 
-export const connectDatabase = async () => {
+const connectDatabase = async () => {
   try {
     await mongoose.connect(DB_URI);
     console.log(`Connected to database in ${NODE_ENV} mode`);
@@ -15,4 +15,4 @@ export const connectDatabase = async () => {
   }
 };
 
-// export default connectDatabase;
+export default connectDatabase;

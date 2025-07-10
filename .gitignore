@@ -9,3 +9,5 @@ uploads/
 *.swp
 yarn-error.log
 coverage
+
+.vscode/
