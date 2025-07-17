@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { generateUniqueUsername } from "../utils/username.js";
 import Account from "../models/account.model.js";
 
-export const registerUser = async (req, res) => {
+export const signUp = async (req, res) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password)
@@ -35,7 +35,7 @@ export const registerUser = async (req, res) => {
   }
 };
 
-export const loginUser = async (req, res) => {
+export const signIn = async (req, res) => {
   const { email, password } = req.body;
 
   // console.log("Login request received:", email, password);
