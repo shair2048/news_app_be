@@ -15,6 +15,7 @@ import {
 } from "./config/env.js";
 import connectDatabase from "./database/mongodb.js";
 import corsMiddleware from "./middlewares/cors.middleware.js";
+import errorMiddleware from "./middlewares/error.middleware.js";
 
 // __dirname in ESM
 const __filename = fileURLToPath(import.meta.url);
@@ -37,6 +38,7 @@ app.use(
   })
 );
 app.use(corsMiddleware);
+app.use(errorMiddleware);
 
 // routes
 app.use("/api/auth", authRoute);
