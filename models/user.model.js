@@ -9,12 +9,12 @@ const accountSchema = new mongoose.Schema(
       minlength: 2,
       maxlength: 50,
     },
-    username: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
-    },
+    // username: {
+    //   type: String,
+    //   required: false,
+    //   // unique: false,
+    //   trim: true,
+    // },
     email: {
       type: String,
       required: [true, "Email is required"],
@@ -47,5 +47,5 @@ const accountSchema = new mongoose.Schema(
   }
 );
 
-const Account = mongoose.model("Account", accountSchema);
-export default Account;
+const User = mongoose.model("User", accountSchema);
+export default User;
