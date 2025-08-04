@@ -3,7 +3,7 @@ import express from "express";
 import { v2 as cloudinary } from "cloudinary";
 import "dotenv/config";
 import authRoute from "./routes/auth.routes.js";
-import accountRoute from "./routes/account.routes.js";
+import userRoute from "./routes/user.routes.js";
 import newsRoute from "./routes/news.routes.js";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -42,7 +42,7 @@ app.use(errorMiddleware);
 
 // routes
 app.use("/api/auth", authRoute);
-app.use("/api/accounts", accountRoute);
+app.use("/api/users", userRoute);
 app.use("/api/news", newsRoute);
 
 app.listen(PORT, async () => {
