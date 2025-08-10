@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 // import { generateUniqueUsername } from "../utils/username.js";
 import { JWT_SECRET, JWT_EXPIRES_IN } from "../config/env.js";
 import User from "../models/user.model.js";
+import Blacklist from "../models/blacklist.model.js";
 
 export const signUp = async (req, res, next) => {
   const session = await mongoose.startSession();
@@ -64,7 +65,7 @@ export const signUp = async (req, res, next) => {
 export const signIn = async (req, res, next) => {
   const { email, password } = req.body;
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
       const error = new Error("User not found");
@@ -91,6 +92,39 @@ export const signIn = async (req, res, next) => {
         token,
         user,
       },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const signOut = async (req, res, next) => {
+  try {
+    let accessToken;
+
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer")
+    ) {
+      accessToken = req.headers.authorization.split(" ")[1];
+    }
+
+    const blacklistedToken = await Blacklist.findOne({
+      token: accessToken,
+    });
+
+    if (blacklistedToken)
+      return res.status(400).json({
+        message: "Token already blacklisted.",
+      });
+
+    // Add the token to the blacklist
+    await Blacklist.create({
+      token: accessToken,
+    });
+
+    res.status(200).json({
+      message: "User logged out successfully.",
     });
   } catch (error) {
     next(error);
