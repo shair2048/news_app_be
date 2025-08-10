@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { signUp, signIn } from "../controllers/auth.controllers.js";
-import { check } from "express-validator";
+import { signUp, signIn, signOut } from "../controllers/auth.controllers.js";
+import { check, header } from "express-validator";
 import validate from "../middlewares/validate.middleware.js";
 
 const authRoute = Router();
@@ -41,6 +41,12 @@ authRoute.post(
   check("password").notEmpty().withMessage("Please fill your password"),
   validate,
   signIn
+);
+authRoute.post(
+  "/sign-out",
+  header("authorization").notEmpty().withMessage("Token is missing"),
+  validate,
+  signOut
 );
 
 export default authRoute;
