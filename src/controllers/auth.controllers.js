@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 // import { generateUniqueUsername } from "../utils/username.js";
-import { JWT_SECRET, JWT_EXPIRES_IN } from "../config/env.js";
+import { JWT_SECRET, JWT_EXPIRES_IN } from "../../config/env.js";
 import User from "../models/user.model.js";
 import Blacklist from "../models/blacklist.model.js";
 
