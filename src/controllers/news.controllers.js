@@ -1,6 +1,7 @@
 import { v2 as cloudinary } from "cloudinary";
 import News from "../models/news.model.js";
 
+
 export const getAllNews = async (req, res, next) => {
   try {
     const news = await News.find({});
@@ -28,6 +29,7 @@ export const getNews = async (req, res, next) => {
 };
 
 export const createNews = async (req, res, next) => {
+
   const { title, content, tags, category } = req.body;
 
   if (!title || !content)
