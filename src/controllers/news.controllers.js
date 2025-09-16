@@ -19,7 +19,7 @@ export const getNews = async (req, res, next) => {
     if (!news) {
       return res
         .status(404)
-        .json({ message: `News with ID ${newsId} not found` });
+        .json({ message: `News with ID ${newsId} not found!` });
     }
     res.status(200).json(news);
   } catch (error) {
