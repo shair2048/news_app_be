@@ -1,6 +1,10 @@
 import { Router } from "express";
 import multer from "multer";
-import { getNews, createNews } from "../controllers/news.controllers.js";
+import {
+  getAllNews,
+  getNews,
+  createNews,
+} from "../controllers/news.controllers.js";
 
 const newsRoute = Router();
 const upload = multer({
@@ -8,6 +12,7 @@ const upload = multer({
 });
 
 newsRoute.post("/", upload.single("imageUrl"), createNews);
-newsRoute.get("/", getNews);
+newsRoute.get("/", getAllNews);
+newsRoute.get("/:id", getNews);
 
 export default newsRoute;

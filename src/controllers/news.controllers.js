@@ -1,18 +1,33 @@
 import { v2 as cloudinary } from "cloudinary";
 import News from "../models/news.model.js";
 
-export const getNews = async (req, res) => {
+export const getAllNews = async (req, res, next) => {
   try {
     const news = await News.find({});
+
     res.status(200).json(news);
-  } catch {
-    res.status(500).json({
-      message: "Internal server error.",
-    });
+  } catch (error) {
+    next(error);
   }
 };
 
-export const createNews = async (req, res) => {
+export const getNews = async (req, res, next) => {
+  try {
+    const newsId = req.params.id;
+    const news = await News.findById(newsId);
+
+    if (!news) {
+      return res
+        .status(404)
+        .json({ message: `News not found with this ${newsId}` });
+    }
+    res.status(200).json(news);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const createNews = async (req, res, next) => {
   const { title, content, tags, category } = req.body;
 
   if (!title || !content)
@@ -63,9 +78,7 @@ export const createNews = async (req, res) => {
       message: "News created successfully.",
       news,
     });
-  } catch {
-    res.status(500).json({
-      message: "Internal server error.",
-    });
+  } catch (error) {
+    next(error);
   }
 };
