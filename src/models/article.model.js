@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const newsSchema = new mongoose.Schema(
+const articleSchema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -35,5 +35,5 @@ const newsSchema = new mongoose.Schema(
   }
 );
 
-const News = mongoose.model("News", newsSchema);
-export default News;
+const Article = mongoose.model("Article", articleSchema);
+export default Article;

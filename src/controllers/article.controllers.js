@@ -1,33 +1,34 @@
 import { v2 as cloudinary } from "cloudinary";
-import News from "../models/news.model.js";
+import Article from "../models/article.model.js";
 
-export const getAllNews = async (req, res, next) => {
+export const getAllArticles = async (req, res, next) => {
   try {
-    const news = await News.find({});
-    res.status(200).json(news);
+    const articles = await Article.find({});
+
+    res.status(200).json({ success: true, data: articles });
   } catch (error) {
     next(error);
   }
 };
 
-export const getNewsById = async (req, res, next) => {
+export const getArticleById = async (req, res, next) => {
   try {
-    const newsId = req.params.id;
-    const news = await News.findById(newsId);
+    const articleId = req.params.id;
+    const article = await Article.findById(articleId);
 
-    if (!news) {
+    if (!article) {
       return res
         .status(404)
-        .json({ message: `News with ID ${newsId} not found!` });
+        .json({ message: `Article with ID ${article} not found!` });
     }
 
-    res.status(200).json(news);
+    res.status(200).json({ success: true, data: article });
   } catch (error) {
     next(error);
   }
 };
 
-export const createNews = async (req, res) => {
+export const createArticle = async (req, res) => {
   const { title, content, tags, category } = req.body;
 
   if (!title || !content)
@@ -65,7 +66,7 @@ export const createNews = async (req, res) => {
       // Assign the secure URL to imageUrl
     }
 
-    const news = new News({
+    const article = new Article({
       title,
       content,
       imageUrl,
@@ -73,10 +74,12 @@ export const createNews = async (req, res) => {
       category: category || "",
     });
 
-    await news.save();
+    console.log("Article created:", article);
+
+    await article.save();
     res.status(201).json({
-      message: "News created successfully.",
-      news,
+      message: "Article created successfully.",
+      article,
     });
   } catch {
     res.status(500).json({

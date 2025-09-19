@@ -11,7 +11,7 @@ import {
 } from "../config/env.js";
 import authRoute from "./routes/auth.routes.js";
 import userRoute from "./routes/user.routes.js";
-import newsRoute from "./routes/news.routes.js";
+import articleRoute from "./routes/article.routes.js";
 import corsMiddleware from "./middlewares/cors.middleware.js";
 import errorMiddleware from "./middlewares/error.middleware.js";
 
@@ -41,7 +41,7 @@ app.use(errorMiddleware);
 // routes
 app.use("/api/auth", authRoute);
 app.use("/api/users", userRoute);
-app.use("/api/news", newsRoute);
+app.use("/api/articles", articleRoute);
 
 // Cloudinary configuration (to save images in cloud)
 cloudinary.config({
