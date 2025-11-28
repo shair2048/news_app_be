@@ -1,14 +1,14 @@
-import fs from "node:fs";
+// import fs from "node:fs";
 import express from "express";
-import { v2 as cloudinary } from "cloudinary";
+// import { v2 as cloudinary } from "cloudinary";
 import "dotenv/config";
-import path from "path";
-import { fileURLToPath } from "url";
-import {
-  CLOUDINARY_CLOUD_NAME,
-  CLOUDINARY_API_KEY,
-  CLOUDINARY_API_SECRET,
-} from "../config/env.js";
+// import path from "path";
+// import { fileURLToPath } from "url";
+// import {
+//   CLOUDINARY_CLOUD_NAME,
+//   CLOUDINARY_API_KEY,
+//   CLOUDINARY_API_SECRET,
+// } from "../config/env.js";
 import authRoute from "./routes/auth.routes.js";
 import userRoute from "./routes/user.routes.js";
 import articleRoute from "./routes/article.routes.js";
@@ -16,17 +16,17 @@ import corsMiddleware from "./middlewares/cors.middleware.js";
 import errorMiddleware from "./middlewares/error.middleware.js";
 
 // __dirname in ESM
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
 
-const uploadDir = path.join(__dirname, "uploads");
+// const uploadDir = path.join(__dirname, "uploads");
 
 const app = express();
 
-if (!fs.existsSync(uploadDir))
-  fs.mkdirSync(uploadDir, {
-    recursive: true,
-  });
+// if (!fs.existsSync(uploadDir))
+//   fs.mkdirSync(uploadDir, {
+//     recursive: true,
+//   });
 
 // middleware
 app.use(express.json());
@@ -44,10 +44,10 @@ app.use("/api/users", userRoute);
 app.use("/api/articles", articleRoute);
 
 // Cloudinary configuration (to save images in cloud)
-cloudinary.config({
-  cloud_name: CLOUDINARY_CLOUD_NAME,
-  api_key: CLOUDINARY_API_KEY,
-  api_secret: CLOUDINARY_API_SECRET,
-});
+// cloudinary.config({
+//   cloud_name: CLOUDINARY_CLOUD_NAME,
+//   api_key: CLOUDINARY_API_KEY,
+//   api_secret: CLOUDINARY_API_SECRET,
+// });
 
 export default app;

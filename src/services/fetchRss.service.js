@@ -3,7 +3,8 @@ import axios from "axios";
 import Article from "../models/article.model.js";
 
 export async function crawlRssAndStore({
-  rssUrl = "https://vnexpress.net/rss/tin-moi-nhat.rss",
+  rssUrl = "",
+  categoryId = null,
   maxItems = 10,
 } = {}) {
   const result = {
@@ -89,6 +90,7 @@ export async function crawlRssAndStore({
           imageUrl,
           publishedAt: publishedAt ? new Date(publishedAt) : null,
           source: rssUrl,
+          category_id: categoryId,
         };
 
         try {
