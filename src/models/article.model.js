@@ -4,28 +4,35 @@ const articleSchema = new mongoose.Schema(
   {
     title: {
       type: String,
-      required: [true, "Title is required"],
+    },
+    description: {
+      type: String,
+    },
+    articleUrl: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
     },
     content: {
       type: String,
-      required: [true, "Content is required"],
     },
+    category: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Category",
+      },
+    ],
     imageUrl: {
       type: String,
     },
-    tags: [
-      {
-        type: String,
-      },
-    ],
-    category: {
+    source: {
       type: String,
     },
-    readCount: {
-      type: Number,
-      default: 0,
+    publishedAt: {
+      type: Date,
     },
-    createdAt: {
+    scrapedAt: {
       type: Date,
       default: Date.now,
     },
