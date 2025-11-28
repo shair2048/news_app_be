@@ -17,12 +17,10 @@ const articleSchema = new mongoose.Schema(
     content: {
       type: String,
     },
-    category: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Category",
-      },
-    ],
+    category_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+    },
     imageUrl: {
       type: String,
     },
