@@ -1,6 +1,6 @@
 // import { v2 as cloudinary } from "cloudinary";
 import Article from "../models/article.model.js";
-import { crawlAllRss } from "../services/fetchAllRss.service.js";
+// import { crawlAllRss } from "../services/fetchAllRss.service.js";
 // import { crawlRssAndStore } from "../services/fetchRss.service.js";
 
 export const getAllArticles = async (req, res, next) => {
@@ -30,12 +30,12 @@ export const getArticleById = async (req, res, next) => {
   }
 };
 
-export const fetchArticlesData = async (req, res) => {
-  try {
-    const result = await crawlAllRss();
-    res.status(200).json({ message: "Fetched", result });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Error", error: err.message });
-  }
-};
+// export const fetchArticlesData = async (req, res) => {
+//   try {
+//     const result = await crawlAllRss();
+//     res.status(200).json({ message: "Fetched", result });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: "Error", error: err.message });
+//   }
+// };

@@ -6,8 +6,6 @@ export async function crawlAllRss() {
   const results = [];
 
   for (const feed of RSS_FEEDS) {
-    // console.log(`---- Crawling RSS: ${feed.slug} ----`);
-
     let category = await Category.findOne({ slug: feed.slug });
 
     if (!category) {
