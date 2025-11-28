@@ -1,7 +1,4 @@
-// import { v2 as cloudinary } from "cloudinary";
 import Article from "../models/article.model.js";
-// import { crawlAllRss } from "../services/fetchAllRss.service.js";
-// import { crawlRssAndStore } from "../services/fetchRss.service.js";
 
 export const getAllArticles = async (req, res, next) => {
   try {
