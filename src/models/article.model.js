@@ -14,14 +14,20 @@ const articleSchema = new mongoose.Schema(
       unique: true,
       index: true,
     },
-    content: {
+    description: {
       type: String,
     },
     category_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
     },
-    imageUrl: {
+    articleUrl: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+    },
+    content: {
       type: String,
     },
     source: {
