@@ -3,7 +3,7 @@ import { Router } from "express";
 import {
   getAllArticles,
   // getArticleById,
-  fetchArticlesData,
+  // fetchArticlesData,
 } from "../controllers/article.controllers.js";
 
 const articleRoute = Router();
@@ -14,6 +14,6 @@ const articleRoute = Router();
 // articleRoute.post("/", upload.single("imageUrl"), createArticle);
 articleRoute.get("/", getAllArticles);
 // articleRoute.get("/:id", getArticleById);
-articleRoute.get("/fetch", fetchArticlesData);
+// articleRoute.get("/fetch", fetchArticlesData);
 
 export default articleRoute;
