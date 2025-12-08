@@ -1,62 +1,53 @@
 export const RSS_FEEDS = [
   {
     name: "Thế giới",
-    slug: "the-gioi",
+    slug: "world",
     sourceUrl: "https://vnexpress.net/rss/the-gioi.rss",
   },
   {
     name: "Thời sự",
-    slug: "thoi-su",
+    slug: "news",
     sourceUrl: "https://vnexpress.net/rss/thoi-su.rss",
   },
   {
     name: "Kinh doanh",
-    slug: "kinh-doanh",
+    slug: "business",
     sourceUrl: "https://vnexpress.net/rss/kinh-doanh.rss",
   },
   {
     name: "Giải trí",
-    slug: "giai-tri",
+    slug: "entertainment",
     sourceUrl: "https://vnexpress.net/rss/giai-tri.rss",
   },
   {
     name: "Thể thao",
-    slug: "the-thao",
+    slug: "sport",
     sourceUrl: "https://vnexpress.net/rss/the-thao.rss",
   },
   {
     name: "Pháp luật",
-    slug: "phap-luat",
+    slug: "law",
     sourceUrl: "https://vnexpress.net/rss/phap-luat.rss",
   },
   {
     name: "Giáo dục",
-    slug: "giao-duc",
+    slug: "education",
     sourceUrl: "https://vnexpress.net/rss/giao-duc.rss",
   },
   {
     name: "Sức khỏe",
-    slug: "suc-khoe",
+    slug: "health",
     sourceUrl: "https://vnexpress.net/rss/suc-khoe.rss",
   },
-  {
-    name: "Đời sống",
-    slug: "doi-song",
-    sourceUrl: "https://vnexpress.net/rss/gia-dinh.rss",
-  },
+
   {
     name: "Du lịch",
-    slug: "du-lich",
+    slug: "travel",
     sourceUrl: "https://vnexpress.net/rss/du-lich.rss",
   },
   {
     name: "Khoa học - Công nghệ",
-    slug: "khoa-hoc-cong-nghe",
+    slug: "science-tech",
     sourceUrl: "https://vnexpress.net/rss/khoa-hoc-cong-nghe.rss",
-  },
-  {
-    name: "Xe",
-    slug: "xe",
-    sourceUrl: "https://vnexpress.net/rss/oto-xe-may.rss",
   },
 ];
