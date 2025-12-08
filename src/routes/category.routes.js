@@ -1,9 +1,12 @@
 import { Router } from "express";
-import { getAllCategories } from "../controllers/category.controllers.js";
+import {
+  getAllCategories,
+  getArticlesByCategory,
+} from "../controllers/category.controllers.js";
 
 const categoryRoute = Router();
 
 categoryRoute.get("/", getAllCategories);
-// articleRoute.get("/:id", getArticleById);
+categoryRoute.get("/:slug/articles", getArticlesByCategory);
 
 export default categoryRoute;
