@@ -5,6 +5,7 @@ import userRoute from "./routes/user.routes.js";
 import articleRoute from "./routes/article.routes.js";
 import corsMiddleware from "./middlewares/cors.middleware.js";
 import errorMiddleware from "./middlewares/error.middleware.js";
+import categoryRoute from "./routes/category.routes.js";
 
 const app = express();
 
@@ -22,5 +23,6 @@ app.use(errorMiddleware);
 app.use("/api/auth", authRoute);
 app.use("/api/users", userRoute);
 app.use("/api/articles", articleRoute);
+app.use("/api/categories", categoryRoute);
 
 export default app;

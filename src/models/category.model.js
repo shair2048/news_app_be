@@ -12,6 +12,7 @@ const categorySchema = new mongoose.Schema(
     },
     source: {
       type: String,
+      select: false,
     },
   },
   {
