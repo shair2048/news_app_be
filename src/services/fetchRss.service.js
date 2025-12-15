@@ -45,6 +45,7 @@ export async function crawlRssAndStore({
           continue;
         }
 
+        let rawDescription = null;
         let description = null;
         let content = null;
         let imageUrl = null;
@@ -58,7 +59,9 @@ export async function crawlRssAndStore({
 
           const $html = cheerio.load(htmlResponse.data);
 
-          description = $html("meta[name=description]").attr("content") || null;
+          rawDescription =
+            $html("meta[name=description]").attr("content") || null;
+          description = rawDescription.replace(/\s*-\s*VnExpress$/i, "");
 
           let extractedText = "";
           $html("article p.Normal").each((index, element) => {
