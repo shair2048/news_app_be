@@ -1,5 +1,5 @@
 import cors from "cors";
-import { CLIENT_URL } from "../../config/env.js";
+import { CLIENT_URL } from "../../configs/env.js";
 
 const corsOptions = {
   origin: CLIENT_URL, // Allowed origin

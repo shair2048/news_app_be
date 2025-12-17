@@ -1,4 +1,4 @@
-import { PORT } from "./config/env.js";
+import { PORT } from "./configs/env.js";
 import connectDatabase from "./src/database/mongodb.js";
 import app from "./src/app.js";
 import { startRssCronJob } from "./src/services/cronRss.service.js";
