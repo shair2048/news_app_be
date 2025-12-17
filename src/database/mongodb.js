@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { NODE_ENV, DB_URI } from "../../config/env.js";
+import { NODE_ENV, DB_URI } from "../../configs/env.js";
 
 if (!DB_URI) {
   throw new Error("Database URI is not defined in environment variables");

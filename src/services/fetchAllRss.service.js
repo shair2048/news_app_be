@@ -1,4 +1,4 @@
-import { RSS_FEEDS } from "../configs/rssFeeds.js";
+import { RSS_FEEDS } from "../../configs/rssFeeds.js";
 import Category from "../models/category.model.js";
 import { crawlRssAndStore } from "./fetchRss.service.js";
 

@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 // import { generateUniqueUsername } from "../utils/username.js";
-import { JWT_SECRET, JWT_EXPIRES_IN } from "../../config/env.js";
+import { JWT_SECRET, JWT_EXPIRES_IN } from "../../configs/env.js";
 import User from "../models/user.model.js";
 import Blacklist from "../models/blacklist.model.js";
 
@@ -102,10 +102,7 @@ export const signOut = async (req, res, next) => {
   try {
     let accessToken;
 
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith("Bearer")
-    ) {
+    if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
       accessToken = req.headers.authorization.split(" ")[1];
     }
 
