@@ -17,9 +17,7 @@ export const getArticleById = async (req, res, next) => {
     const article = await Article.findById(articleId);
 
     if (!article) {
-      return res
-        .status(404)
-        .json({ message: `Article with ID ${article} not found!` });
+      return res.status(404).json({ message: `Article with ID ${article} not found!` });
     }
 
     res.status(200).json({ success: true, data: article });
@@ -35,5 +33,36 @@ export const fetchArticlesData = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error", error: err.message });
+  }
+};
+
+export const getLatestArticles = async (req, res) => {
+  try {
+    const days = Number(req.query.days) || 3;
+    const limit = Number(req.query.limit) || 8;
+    const hasImage = req.query.hasImage === "true";
+
+    const fromDate = new Date();
+    fromDate.setDate(fromDate.getDate() - days);
+
+    const filter = {
+      publishedAt: { $gte: fromDate },
+    };
+
+    if (hasImage) {
+      filter.imageUrl = { $exists: true, $ne: "" };
+    }
+
+    const articles = await Article.find(filter).sort({ publishedAt: -1 }).limit(limit);
+
+    res.status(200).json({
+      success: true,
+      daysCount: days,
+      limitItems: limit,
+      totalItems: articles.length,
+      data: articles,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
