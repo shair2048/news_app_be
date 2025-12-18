@@ -50,7 +50,7 @@ export const getLatestArticles = async (req, res) => {
     };
 
     if (hasImage) {
-      filter.imageUrl = { $exists: true, $ne: "" };
+      filter.imageUrl = { $exists: true, $nin: ["", null] };
     }
 
     const articles = await Article.find(filter).sort({ publishedAt: -1 }).limit(limit);
