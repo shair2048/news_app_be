@@ -19,7 +19,7 @@ export const getArticlesByCategory = async (req, res, next) => {
 
     const skip = (page - 1) * limit;
 
-    const category = await Category.findOne({ slug: categorySlug });
+    const category = await Category.findOne({ slug: categorySlug }).select("name");
 
     if (!category) {
       return res.status(404).json({
@@ -27,6 +27,8 @@ export const getArticlesByCategory = async (req, res, next) => {
         message: "Category not found",
       });
     }
+
+    const categoryName = category.name;
 
     const totalArticles = await Article.countDocuments({
       category_id: category._id,
@@ -44,6 +46,7 @@ export const getArticlesByCategory = async (req, res, next) => {
       currentPage: page,
       totalPages: Math.ceil(totalArticles / limit),
       totalItems: totalArticles,
+      categoryName: categoryName,
       data: articles,
     });
   } catch (error) {
