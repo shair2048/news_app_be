@@ -53,3 +53,49 @@ export const getArticlesByCategory = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getArticlesPreviewAndCateory = async (req, res, next) => {
+  try {
+    const result = await Category.aggregate([
+      {
+        $lookup: {
+          from: "articles",
+          localField: "_id",
+          foreignField: "category_id",
+          as: "articles",
+          pipeline: [
+            {
+              $match: {
+                imageUrl: { $exists: true, $nin: ["", null] },
+              },
+            },
+            { $sort: { publishedAt: -1 } },
+            { $limit: 4 },
+            {
+              $project: {
+                title: 1,
+                description: 1,
+                imageUrl: 1,
+                publishedAt: 1,
+              },
+            },
+          ],
+        },
+      },
+      {
+        $project: {
+          categoryName: "$name",
+          categorySlug: "$slug",
+          articles: 1,
+        },
+      },
+    ]);
+
+    res.status(200).json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
