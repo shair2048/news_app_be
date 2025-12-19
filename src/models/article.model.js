@@ -17,6 +17,24 @@ const articleSchema = new mongoose.Schema(
     content: {
       type: String,
     },
+    summary: {
+      text: {
+        type: String,
+        default: null,
+      },
+      generatedAt: {
+        type: Date,
+      },
+      modelUsed: {
+        type: String,
+        default: "gemini-pro",
+      },
+      status: {
+        type: String,
+        enum: ["pending", "completed", "failed", "none"],
+        default: "none",
+      },
+    },
     category_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",

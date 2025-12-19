@@ -7,6 +7,7 @@ export const {
   NODE_ENV,
   DB_URI,
   CLIENT_URL,
+  GEMINI_API_KEY,
   JWT_SECRET,
   JWT_EXPIRES_IN,
 } = process.env;
