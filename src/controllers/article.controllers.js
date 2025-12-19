@@ -53,14 +53,35 @@ export const getLatestArticles = async (req, res) => {
       filter.imageUrl = { $exists: true, $nin: ["", null] };
     }
 
-    const articles = await Article.find(filter).sort({ publishedAt: -1 }).limit(limit);
+    const articles = await Article.find(filter)
+      .sort({ publishedAt: -1 })
+      .limit(limit)
+      .populate({
+        path: "category_id",
+        select: "name slug",
+      });
+
+    const dataArticles = articles.map((article) => {
+      const obj = article.toObject();
+      return {
+        ...obj,
+        category: obj.category_id
+          ? {
+              _id: obj.category_id._id,
+              name: obj.category_id.name,
+              slug: obj.category_id.slug,
+            }
+          : null,
+        category_id: undefined,
+      };
+    });
 
     res.status(200).json({
       success: true,
       daysCount: days,
       limitItems: limit,
       totalItems: articles.length,
-      data: articles,
+      data: dataArticles,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
