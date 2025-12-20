@@ -10,14 +10,14 @@ import searchRoute from "./routes/search.routes.js";
 const app = express();
 
 // middleware
+app.use(corsMiddleware);
+
 app.use(express.json());
 app.use(
   express.urlencoded({
     extended: false,
   })
 );
-app.use(corsMiddleware);
-app.use(errorMiddleware);
 
 // routes
 app.use("/api/auth", authRoute);
@@ -25,5 +25,7 @@ app.use("/api/users", userRoute);
 app.use("/api/articles", articleRoute);
 app.use("/api/categories", categoryRoute);
 app.use("/api/search", searchRoute);
+
+app.use(errorMiddleware);
 
 export default app;
