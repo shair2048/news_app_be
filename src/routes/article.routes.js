@@ -1,7 +1,7 @@
 import { Router } from "express";
 import {
   getAllArticles,
-  // getArticleById,
+  getArticleById,
   fetchArticlesData,
   getLatestArticles,
   summarizeArticle,
@@ -12,7 +12,7 @@ const articleRoute = Router();
 articleRoute.get("/", getAllArticles);
 articleRoute.get("/latest", getLatestArticles);
 articleRoute.get("/fetch/all", fetchArticlesData);
+articleRoute.get("/:id", getArticleById);
 articleRoute.post("/:id/summarize", summarizeArticle);
-// articleRoute.get("/:id", getArticleById);
 
 export default articleRoute;
