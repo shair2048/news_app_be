@@ -6,6 +6,31 @@ import { JWT_SECRET, JWT_EXPIRES_IN } from "../../configs/env.js";
 import User from "../models/user.model.js";
 import Blacklist from "../models/blacklist.model.js";
 
+const sendTokenResponse = (user, statusCode, res, message) => {
+  const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
+    expiresIn: JWT_EXPIRES_IN,
+  });
+
+  // set cookie options
+  const cookieOptions = {
+    expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  };
+
+  // - res.cookie: for Web to store the token in cookies
+  // - json({ token }): for Mobile App to store the token in local storage
+  res.status(statusCode).cookie("token", token, cookieOptions).json({
+    session: true,
+    message: message,
+    data: {
+      token,
+      user,
+    },
+  });
+};
+
 export const signUp = async (req, res, next) => {
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -40,21 +65,12 @@ export const signUp = async (req, res, next) => {
       { session }
     );
 
-    const token = jwt.sign({ userId: newUsers[0]._id }, JWT_SECRET, {
-      expiresIn: JWT_EXPIRES_IN,
-    });
+    const user = newUsers[0];
 
     await session.commitTransaction();
     session.endSession();
 
-    res.status(201).json({
-      session: true,
-      message: "User created successfully.",
-      data: {
-        token,
-        user: newUsers[0],
-      },
-    });
+    sendTokenResponse(user, 201, res, "User created successfully.");
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
@@ -81,18 +97,7 @@ export const signIn = async (req, res, next) => {
       throw error;
     }
 
-    const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
-      expiresIn: JWT_EXPIRES_IN,
-    });
-
-    res.status(200).json({
-      session: true,
-      message: "User logged in successfully.",
-      data: {
-        token,
-        user,
-      },
-    });
+    sendTokenResponse(user, 200, res, "User logged in successfully.");
   } catch (error) {
     next(error);
   }
@@ -100,24 +105,26 @@ export const signIn = async (req, res, next) => {
 
 export const signOut = async (req, res, next) => {
   try {
-    let accessToken;
+    let token = req.cookies.token;
 
-    if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
-      accessToken = req.headers.authorization.split(" ")[1];
+    if (
+      !token &&
+      req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer")
+    ) {
+      token = req.headers.authorization.split(" ")[1];
     }
 
-    const blacklistedToken = await Blacklist.findOne({
-      token: accessToken,
-    });
+    if (token) {
+      const existingBlacklist = await Blacklist.findOne({ token });
+      if (!existingBlacklist) {
+        await Blacklist.create({ token });
+      }
+    }
 
-    if (blacklistedToken)
-      return res.status(400).json({
-        message: "Token already blacklisted.",
-      });
-
-    // Add the token to the blacklist
-    await Blacklist.create({
-      token: accessToken,
+    res.cookie("token", "loggedout", {
+      expires: new Date(Date.now() + 10 * 1000),
+      httpOnly: true,
     });
 
     res.status(200).json({
