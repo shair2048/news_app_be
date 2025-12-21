@@ -6,11 +6,13 @@ import corsMiddleware from "./middlewares/cors.middleware.js";
 import errorMiddleware from "./middlewares/error.middleware.js";
 import categoryRoute from "./routes/category.routes.js";
 import searchRoute from "./routes/search.routes.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
 // middleware
 app.use(corsMiddleware);
+app.use(cookieParser());
 
 app.use(express.json());
 app.use(
