@@ -28,7 +28,26 @@ export const searchArticles = async (req, res, next) => {
     const articles = await Article.find(searchQuery)
       .sort({ publishedAt: -1 })
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
+      .populate({
+        path: "category_id",
+        select: "name slug",
+      });
+
+    const dataArticles = articles.map((article) => {
+      const obj = article.toObject();
+      return {
+        ...obj,
+        category: obj.category_id
+          ? {
+              _id: obj.category_id._id,
+              name: obj.category_id.name,
+              slug: obj.category_id.slug,
+            }
+          : null,
+        category_id: undefined,
+      };
+    });
 
     res.status(200).json({
       success: true,
@@ -36,7 +55,7 @@ export const searchArticles = async (req, res, next) => {
       currentPage: page,
       totalPages: Math.ceil(total / limit),
       totalItems: total,
-      data: articles,
+      data: dataArticles,
     });
   } catch (error) {
     next(error);
