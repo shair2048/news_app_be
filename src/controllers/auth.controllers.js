@@ -12,16 +12,16 @@ const sendTokenResponse = (user, statusCode, res, message) => {
   });
 
   // set cookie options
-  const cookieOptions = {
-    expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
-    httpOnly: true,
-    secure: NODE_ENV === "production",
-    sameSite: "lax",
-  };
+  // const cookieOptions = {
+  //   expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+  //   httpOnly: true,
+  //   secure: NODE_ENV === "production",
+  //   sameSite: "lax",
+  // };
 
   // - res.cookie: for Web to store the token in cookies
   // - json({ token }): for Mobile App to store the token in local storage
-  res.status(statusCode).cookie("token", token, cookieOptions).json({
+  res.status(statusCode).json({
     session: true,
     message: message,
     data: {
