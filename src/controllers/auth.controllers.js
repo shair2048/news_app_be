@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 // import { generateUniqueUsername } from "../utils/username.js";
-import { NODE_ENV, JWT_SECRET, JWT_EXPIRES_IN } from "../../configs/env.js";
+import { JWT_SECRET, JWT_EXPIRES_IN } from "../../configs/env.js";
 import User from "../models/user.model.js";
 import Blacklist from "../models/blacklist.model.js";
 
@@ -11,16 +11,6 @@ const sendTokenResponse = (user, statusCode, res, message) => {
     expiresIn: JWT_EXPIRES_IN,
   });
 
-  // set cookie options
-  // const cookieOptions = {
-  //   expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
-  //   httpOnly: true,
-  //   secure: NODE_ENV === "production",
-  //   sameSite: "lax",
-  // };
-
-  // - res.cookie: for Web to store the token in cookies
-  // - json({ token }): for Mobile App to store the token in local storage
   res.status(statusCode).json({
     session: true,
     message: message,
@@ -111,13 +101,6 @@ export const signOut = async (req, res, next) => {
     if (!existingBlacklist) {
       await Blacklist.create({ token });
     }
-
-    res.cookie("token", "loggedout", {
-      expires: new Date(Date.now() + 10 * 1000),
-      httpOnly: true,
-      secure: NODE_ENV === "production",
-      sameSite: "lax",
-    });
 
     res.status(200).json({
       message: "User logged out successfully.",
