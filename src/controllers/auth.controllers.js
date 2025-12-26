@@ -105,26 +105,18 @@ export const signIn = async (req, res, next) => {
 
 export const signOut = async (req, res, next) => {
   try {
-    let token = req.cookies.token;
+    let token = req.token;
 
-    if (
-      !token &&
-      req.headers.authorization &&
-      req.headers.authorization.startsWith("Bearer")
-    ) {
-      token = req.headers.authorization.split(" ")[1];
-    }
-
-    if (token) {
-      const existingBlacklist = await Blacklist.findOne({ token });
-      if (!existingBlacklist) {
-        await Blacklist.create({ token });
-      }
+    const existingBlacklist = await Blacklist.findOne({ token });
+    if (!existingBlacklist) {
+      await Blacklist.create({ token });
     }
 
     res.cookie("token", "loggedout", {
       expires: new Date(Date.now() + 10 * 1000),
       httpOnly: true,
+      secure: NODE_ENV === "production",
+      sameSite: "lax",
     });
 
     res.status(200).json({
