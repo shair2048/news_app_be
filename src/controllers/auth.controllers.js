@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 // import { generateUniqueUsername } from "../utils/username.js";
-import { JWT_SECRET, JWT_EXPIRES_IN } from "../../configs/env.js";
+import { NODE_ENV, JWT_SECRET, JWT_EXPIRES_IN } from "../../configs/env.js";
 import User from "../models/user.model.js";
 import Blacklist from "../models/blacklist.model.js";
 
@@ -15,7 +15,7 @@ const sendTokenResponse = (user, statusCode, res, message) => {
   const cookieOptions = {
     expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: NODE_ENV === "production",
     sameSite: "lax",
   };
 
@@ -130,6 +130,21 @@ export const signOut = async (req, res, next) => {
     res.status(200).json({
       message: "User logged out successfully.",
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getMe = async (req, res, next) => {
+  try {
+    const user = await req.user;
+
+    if (!user) {
+      const error = new Error("User not found");
+      error.status = 404;
+      throw error;
+    }
+    res.status(200).json({ success: true, data: user });
   } catch (error) {
     next(error);
   }

@@ -1,7 +1,8 @@
 import { Router } from "express";
-import { signUp, signIn, signOut } from "../controllers/auth.controllers.js";
+import { signUp, signIn, signOut, getMe } from "../controllers/auth.controllers.js";
 import { check, header } from "express-validator";
 import validate from "../middlewares/validate.middleware.js";
+import authorize from "../middlewares/auth.middleware.js";
 
 const authRoute = Router();
 
@@ -48,5 +49,6 @@ authRoute.post(
   validate,
   signOut
 );
+authRoute.get("/about/me", authorize, getMe);
 
 export default authRoute;
