@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { signUp, signIn, signOut, getMe } from "../controllers/auth.controllers.js";
-import { check, header } from "express-validator";
+import { check } from "express-validator";
 import validate from "../middlewares/validate.middleware.js";
 import authorize from "../middlewares/auth.middleware.js";
 
@@ -12,8 +12,8 @@ authRoute.post(
     .notEmpty()
     .withMessage("Please fill your name")
     .bail()
-    .isLength({ min: 3, max: 50 })
-    .withMessage("Name must be at least 3 characters long"),
+    .isLength({ min: 2, max: 100 })
+    .withMessage("Name must be at least 2 characters long"),
   check("email")
     .notEmpty()
     .withMessage("Please fill your email")
@@ -43,12 +43,7 @@ authRoute.post(
   validate,
   signIn
 );
-authRoute.post(
-  "/sign-out",
-  header("authorization").notEmpty().withMessage("Token is missing"),
-  validate,
-  signOut
-);
+authRoute.post("/sign-out", authorize, signOut);
 authRoute.get("/about/me", authorize, getMe);
 
 export default authRoute;
