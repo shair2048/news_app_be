@@ -10,10 +10,12 @@ const categorySchema = new mongoose.Schema(
       unique: true,
       required: true,
     },
-    source: {
-      type: String,
-      select: false,
-    },
+    source: [
+      {
+        type: String,
+        select: false,
+      },
+    ],
   },
   {
     timestamps: true,

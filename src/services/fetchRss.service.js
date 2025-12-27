@@ -3,6 +3,41 @@ import axios from "axios";
 import Article from "../models/article.model.js";
 import { createNotificationsForNewArticle } from "./notification.service.js";
 
+function getSelectorsByDomain(url) {
+  const domain = new URL(url).hostname;
+
+  if (domain.includes("vnexpress.net")) {
+    return {
+      contentSelector: "article.fck_detail p.Normal",
+      removeText: /-\s*VnExpress$/i,
+      imageSelector: "meta[itemprop='contentUrl']",
+    };
+  }
+
+  if (domain.includes("tuoitre.vn")) {
+    return {
+      contentSelector: ".detail-content p",
+      removeText: /-\s*Báo Tuổi Trẻ$/i,
+      imageSelector: "meta[property='og:image']",
+    };
+  }
+
+  if (domain.includes("vtcnews.vn")) {
+    return {
+      contentSelector: ".edittor-content p",
+      removeText: /-\s*VTC News$/i,
+      imageSelector: "meta[property='og:image']",
+    };
+  }
+
+  // Fallback
+  return {
+    contentSelector: "article p, .content p, .post-content p",
+    removeText: null,
+    imageSelector: "meta[property='og:image']",
+  };
+}
+
 export async function crawlRssAndStore({
   rssUrl = "",
   categoryId = null,
@@ -21,9 +56,7 @@ export async function crawlRssAndStore({
       timeout: 10000,
     });
 
-    // Parse RSS XML
     const $rss = cheerio.load(rssRes.data, { xmlMode: true });
-
     const rssItems = $rss("item").toArray().slice(0, maxItems);
 
     for (const rssItem of rssItems) {
@@ -31,14 +64,13 @@ export async function crawlRssAndStore({
 
       try {
         const $rssItem = $rss(rssItem);
-
         const title = $rssItem.find("title").text().trim();
         const articleUrl = $rssItem.find("link").text().trim();
 
-        if (!articleUrl) {
-          result.errors.push({ error: "RSS item has no link" });
-          continue;
-        }
+        const pubDateRaw = $rssItem.find("pubDate").text();
+        let publishedAt = pubDateRaw ? new Date(pubDateRaw) : null;
+
+        if (!articleUrl) continue;
 
         const existed = await Article.findOne({ articleUrl }).lean();
         if (existed) {
@@ -46,11 +78,9 @@ export async function crawlRssAndStore({
           continue;
         }
 
-        let rawDescription = null;
         let description = null;
         let content = null;
         let imageUrl = null;
-        let publishedAt = null;
 
         try {
           const htmlResponse = await axios.get(articleUrl, {
@@ -60,27 +90,45 @@ export async function crawlRssAndStore({
 
           const $html = cheerio.load(htmlResponse.data);
 
-          rawDescription = $html("meta[name=description]").attr("content") || null;
-          description = rawDescription.replace(/\s*-\s*VnExpress$/i, "");
+          const selectors = getSelectorsByDomain(articleUrl);
+
+          let rawDescription =
+            $html("meta[name=description]").attr("content") ||
+            $html("meta[property='og:description']").attr("content");
+
+          if (rawDescription) {
+            description = selectors.removeText
+              ? rawDescription.replace(selectors.removeText, "")
+              : rawDescription;
+          }
 
           let extractedText = "";
-          $html("article p.Normal").each((index, element) => {
+          $html(selectors.contentSelector).each((index, element) => {
             const paragraphText = $html(element).text().trim();
             if (paragraphText) {
               extractedText += paragraphText + "\n\n";
             }
           });
-
           content = extractedText.trim() || null;
 
-          imageUrl = $html("figure meta[itemprop='url']").attr("content") || null;
+          imageUrl =
+            $html(selectors.imageSelector).attr("content") ||
+            $html("meta[property='og:image']").attr("content") ||
+            null;
 
-          publishedAt = $html("meta[itemprop='datePublished']").attr("content") || null;
+          if (!publishedAt) {
+            const metaDate =
+              $html("meta[itemprop='datePublished']").attr("content") ||
+              $html("meta[property='article:published_time']").attr("content");
+            if (metaDate) publishedAt = new Date(metaDate);
+          }
         } catch (err) {
+          console.error(`Lỗi parse HTML ${articleUrl}:`, err.message);
           result.errors.push({
             url: articleUrl,
-            error: "Failed to fetch article page: " + err.message,
+            error: "HTML Fetch Error: " + err.message,
           });
+          continue;
         }
 
         const newArticle = {
@@ -89,7 +137,7 @@ export async function crawlRssAndStore({
           description,
           content,
           imageUrl,
-          publishedAt: publishedAt ? new Date(publishedAt) : null,
+          publishedAt,
           source: rssUrl,
           category_id: categoryId,
         };

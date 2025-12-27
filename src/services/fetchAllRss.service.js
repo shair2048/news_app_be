@@ -14,21 +14,38 @@ export async function crawlAllRss() {
         slug: feed.slug,
         source: feed.sourceUrl,
       });
+    } else {
+      const isSourceChanged =
+        JSON.stringify(category.source) !== JSON.stringify(feed.sourceUrl);
+
+      if (isSourceChanged) {
+        category.source = feed.sourceUrl;
+        await category.save();
+        console.log(`Updated source for category: ${feed.name}`);
+      }
     }
 
-    const response = await crawlRssAndStore({
-      rssUrl: feed.sourceUrl,
-      categoryId: category._id,
-      maxItems: 10,
-    });
+    const feedResults = [];
+
+    for (const rssUrl of feed.sourceUrl) {
+      console.log(`Crawling RSS: ${rssUrl}`);
+
+      const response = await crawlRssAndStore({
+        rssUrl: rssUrl,
+        categoryId: category._id,
+        maxItems: 5,
+      });
+
+      feedResults.push(response);
+
+      await delay(1000);
+    }
 
     results.push({
       categoryId: category._id,
       categorySlug: feed.slug,
-      ...response,
+      ...feedResults,
     });
-
-    await delay(500);
   }
 
   return results;
