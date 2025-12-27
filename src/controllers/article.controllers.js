@@ -2,6 +2,7 @@ import Article from "../models/article.model.js";
 import { crawlAllRss } from "../services/fetchAllRss.service.js";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { GEMINI_API_KEY } from "../../configs/env.js";
+import User from "../models/user.model.js";
 
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
@@ -185,5 +186,80 @@ export const summarizeArticle = async (req, res) => {
       message: "Error summarizing article",
       error: error.message,
     });
+  }
+};
+
+export const toggleBookmark = async (req, res) => {
+  try {
+    const articleId = req.params.id;
+    const userId = req.user._id;
+
+    const article = await Article.findById(articleId);
+    if (!article) {
+      return res.status(404).json({ message: "Article not found" });
+    }
+
+    const isBookmarked = req.user.bookmarks.includes(articleId);
+
+    if (isBookmarked) {
+      await User.findByIdAndUpdate(userId, {
+        $pull: { bookmarks: articleId },
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: "Article removed from bookmarks",
+        isBookmarked: false,
+      });
+    } else {
+      await User.findByIdAndUpdate(userId, {
+        $addToSet: { bookmarks: articleId },
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: "Article added to bookmarks",
+        isBookmarked: true,
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error handling bookmark" });
+  }
+};
+
+export const getBookmarkedArticles = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const user = await User.findById(userId)
+      .populate({
+        path: "bookmarks",
+        select: "title description imageUrl category_id",
+        populate: { path: "category_id", select: "slug" },
+      })
+      .lean();
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const formattedBookmarks = user.bookmarks.map((article) => {
+      const { category_id, ...rest } = article;
+
+      return {
+        ...rest,
+        category: category_id,
+      };
+    });
+
+    res.status(200).json({
+      success: true,
+      count: formattedBookmarks.length,
+      bookmarks: formattedBookmarks,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error fetching bookmarks" });
   }
 };
