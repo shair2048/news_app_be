@@ -7,6 +7,7 @@ import {
   getBookmarkedArticles,
   getLatestArticles,
   summarizeArticle,
+  checkBookmarkStatus,
 } from "../controllers/article.controllers.js";
 import authorize from "../middlewares/auth.middleware.js";
 
@@ -16,7 +17,8 @@ articleRoute.get("/", getAllArticles);
 articleRoute.get("/latest", getLatestArticles);
 articleRoute.get("/bookmarked", authorize, getBookmarkedArticles);
 articleRoute.get("/fetch/all", fetchArticlesData);
-articleRoute.post("/bookmark/:id", authorize, toggleBookmark);
+articleRoute.post("/bookmark", authorize, toggleBookmark);
+articleRoute.get("/bookmark/status/:id", authorize, checkBookmarkStatus);
 articleRoute.get("/:id", getArticleById);
 articleRoute.post("/:id/summarize", summarizeArticle);
 
