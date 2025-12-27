@@ -7,6 +7,7 @@ import errorMiddleware from "./middlewares/error.middleware.js";
 import categoryRoute from "./routes/category.routes.js";
 import searchRoute from "./routes/search.routes.js";
 import cookieParser from "cookie-parser";
+import notificationRoute from "./routes/notification.routes.js";
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use("/api/users", userRoute);
 app.use("/api/articles", articleRoute);
 app.use("/api/categories", categoryRoute);
 app.use("/api/search", searchRoute);
+app.use("/api/notifications", notificationRoute);
 
 app.use(errorMiddleware);
 

@@ -7,12 +7,6 @@ const userSchema = new mongoose.Schema(
       required: [true, "Name is required"],
       trim: true,
     },
-    // username: {
-    //   type: String,
-    //   required: false,
-    //   // unique: false,
-    //   trim: true,
-    // },
     email: {
       type: String,
       required: [true, "Email is required"],
@@ -29,6 +23,12 @@ const userSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Article",
+      },
+    ],
+    followedCategories: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Category",
       },
     ],
     createdAt: {
