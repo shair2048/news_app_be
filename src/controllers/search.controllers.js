@@ -82,8 +82,7 @@ export const searchArticlesByVoice = async (req, res, next) => {
       });
     }
 
-    // --- BƯỚC 1: Xử lý file Audio ---
-    // Chuyển buffer từ RAM sang base64 để gửi cho Gemini
+    // Convert audio buffer to base64
     const audioBase64 = req.file.buffer.toString("base64");
 
     const prompt = `
@@ -115,39 +114,20 @@ export const searchArticlesByVoice = async (req, res, next) => {
     const cleanJson = responseText.replace(/```json|```/g, "").trim();
     const searchParams = JSON.parse(cleanJson);
 
-    // console.log("Gemini interpreted:", searchParams);
-
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
     let dbQuery = {};
 
-    // CÁCH 1: Dùng Text Search (Nhanh, cần index đã tạo ở bước 2)
-    // $text tìm kiếm dựa trên từ khóa Gemini trả về
     if (searchParams.keywords) {
       dbQuery = { $text: { $search: searchParams.keywords } };
     }
 
-    // (Tuỳ chọn) CÁCH 2: Dùng Regex như cũ (Chậm hơn nhưng linh hoạt tìm chuỗi con)
-    // Nếu bạn chưa kịp tạo Text Index, hãy dùng đoạn dưới đây thay cho đoạn $text ở trên:
-    /*
-    const keywordRegex = new RegExp(searchParams.keywords.replace(/ /g, "|"), "i"); 
-    dbQuery = {
-      $or: [
-        { title: keywordRegex },
-        { description: keywordRegex },
-        { content: keywordRegex }
-      ]
-    };
-    */
-
-    // Thực hiện tìm kiếm
     const total = await Article.countDocuments(dbQuery);
 
-    // Sắp xếp theo độ phù hợp của text search (score)
     const articles = await Article.find(dbQuery, { score: { $meta: "textScore" } })
-      .sort({ score: { $meta: "textScore" }, publishedAt: -1 }) // Ưu tiên bài khớp từ khóa nhất, sau đó mới đến bài mới nhất
+      .sort({ score: { $meta: "textScore" }, publishedAt: -1 })
       .skip(skip)
       .limit(limit)
       .populate({
@@ -155,7 +135,6 @@ export const searchArticlesByVoice = async (req, res, next) => {
         select: "name slug",
       });
 
-    // Format dữ liệu trả về giống API search cũ
     const dataArticles = articles.map((article) => {
       const obj = article.toObject();
       return {

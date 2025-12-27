@@ -1,5 +1,6 @@
 import Article from "../models/article.model.js";
 import Category from "../models/category.model.js";
+import User from "../models/user.model.js";
 
 export const getAllCategories = async (req, res, next) => {
   try {
@@ -47,6 +48,7 @@ export const getArticlesByCategory = async (req, res, next) => {
       totalPages: Math.ceil(totalArticles / limit),
       totalItems: totalArticles,
       categoryName: categoryName,
+      categoryId: category._id,
       data: articles,
     });
   } catch (error) {
@@ -94,6 +96,50 @@ export const getArticlesPreviewAndCateory = async (req, res, next) => {
     res.status(200).json({
       success: true,
       data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const toggleFollowCategory = async (req, res, next) => {
+  try {
+    const { categoryId } = req.body;
+    const userId = req.user.id;
+
+    const user = await User.findById(userId);
+
+    const isFollowing = user.followedCategories.includes(categoryId);
+
+    if (isFollowing) {
+      user.followedCategories.pull(categoryId);
+    } else {
+      user.followedCategories.push(categoryId);
+    }
+
+    await user.save();
+    res.status(200).json({ success: true, isFollowing: !isFollowing });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const checkFollowStatus = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const categoryId = id;
+    const userId = req.user.id;
+
+    const user = await User.findById(userId).select("followedCategories");
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    const isFollowed = user.followedCategories.includes(categoryId);
+    res.status(200).json({
+      success: true,
+      isFollowed: isFollowed,
     });
   } catch (error) {
     next(error);

@@ -1,6 +1,7 @@
 import * as cheerio from "cheerio";
 import axios from "axios";
 import Article from "../models/article.model.js";
+import { createNotificationsForNewArticle } from "./notification.service.js";
 
 export async function crawlRssAndStore({
   rssUrl = "",
@@ -59,8 +60,7 @@ export async function crawlRssAndStore({
 
           const $html = cheerio.load(htmlResponse.data);
 
-          rawDescription =
-            $html("meta[name=description]").attr("content") || null;
+          rawDescription = $html("meta[name=description]").attr("content") || null;
           description = rawDescription.replace(/\s*-\s*VnExpress$/i, "");
 
           let extractedText = "";
@@ -73,11 +73,9 @@ export async function crawlRssAndStore({
 
           content = extractedText.trim() || null;
 
-          imageUrl =
-            $html("figure meta[itemprop='url']").attr("content") || null;
+          imageUrl = $html("figure meta[itemprop='url']").attr("content") || null;
 
-          publishedAt =
-            $html("meta[itemprop='datePublished']").attr("content") || null;
+          publishedAt = $html("meta[itemprop='datePublished']").attr("content") || null;
         } catch (err) {
           result.errors.push({
             url: articleUrl,
@@ -97,8 +95,10 @@ export async function crawlRssAndStore({
         };
 
         try {
-          await Article.create(newArticle);
+          const createdArticle = await Article.create(newArticle);
           result.created++;
+
+          await createNotificationsForNewArticle(createdArticle);
         } catch (saveErr) {
           if (saveErr.code === 11000) {
             result.skippedExisting++;
