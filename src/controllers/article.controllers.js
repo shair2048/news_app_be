@@ -191,7 +191,7 @@ export const summarizeArticle = async (req, res) => {
 
 export const toggleBookmark = async (req, res) => {
   try {
-    const articleId = req.params.id;
+    const { articleId } = req.body;
     const userId = req.user._id;
 
     const article = await Article.findById(articleId);
@@ -225,6 +225,27 @@ export const toggleBookmark = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error handling bookmark" });
+  }
+};
+
+export const checkBookmarkStatus = async (req, res, next) => {
+  try {
+    const articleId = req.params.id;
+    const userId = req.user.id;
+
+    const user = await User.findById(userId).select("bookmarks");
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    const isBookmarked = user.bookmarks.includes(articleId);
+    res.status(200).json({
+      success: true,
+      isBookmarked: isBookmarked,
+    });
+  } catch (error) {
+    next(error);
   }
 };
 
