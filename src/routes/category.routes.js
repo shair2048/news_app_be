@@ -6,7 +6,7 @@ import {
   toggleFollowCategory,
   checkFollowStatus,
 } from "../controllers/category.controllers.js";
-import authorize from "../middlewares/auth.middleware.js";
+import { authorize } from "../middlewares/auth.middleware.js";
 
 const categoryRoute = Router();
 

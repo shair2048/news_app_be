@@ -19,6 +19,11 @@ const userSchema = new mongoose.Schema(
       required: [true, "Password is required"],
       select: false, // Do not return password in queries
     },
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
+    },
     bookmarks: [
       {
         type: mongoose.Schema.Types.ObjectId,

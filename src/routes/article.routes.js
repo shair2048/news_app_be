@@ -9,7 +9,7 @@ import {
   summarizeArticle,
   checkBookmarkStatus,
 } from "../controllers/article.controllers.js";
-import authorize from "../middlewares/auth.middleware.js";
+import { authorize } from "../middlewares/auth.middleware.js";
 
 const articleRoute = Router();
 
