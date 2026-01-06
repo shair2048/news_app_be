@@ -3,7 +3,7 @@ import { JWT_SECRET } from "../../configs/env.js";
 import User from "../models/user.model.js";
 import Blacklist from "../models/blacklist.model.js";
 
-const authorize = async (req, res, next) => {
+export const authorize = async (req, res, next) => {
   try {
     let token;
 
@@ -40,4 +40,13 @@ const authorize = async (req, res, next) => {
   }
 };
 
-export default authorize;
+export const restrictTo = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).json({
+        message: "You do not have permission to perform this action",
+      });
+    }
+    next();
+  };
+};
