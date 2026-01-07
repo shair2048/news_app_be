@@ -326,3 +326,56 @@ export const getSummarizedArticlesNumber = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getArticlesBySourceStats = async (req, res, next) => {
+  try {
+    const rawStats = await Article.aggregate([
+      {
+        $group: {
+          _id: "$source",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    const groupedStats = {};
+
+    rawStats.forEach((item) => {
+      let rawSource = String(item._id || "Unknown").trim();
+      let sourceName = "Unknown";
+
+      try {
+        if (rawSource.startsWith("http")) {
+          const urlObj = new URL(rawSource);
+          rawSource = urlObj.hostname;
+        }
+
+        rawSource = rawSource.replace("www.", "");
+
+        sourceName = rawSource.split(".")[0];
+      } catch {
+        console.error(`Error parsing URL: ${rawSource}`);
+      }
+
+      if (groupedStats[sourceName]) {
+        groupedStats[sourceName] += item.count;
+      } else {
+        groupedStats[sourceName] = item.count;
+      }
+    });
+
+    const finalData = Object.keys(groupedStats)
+      .map((key) => ({
+        sourceName: key,
+        count: groupedStats[key],
+      }))
+      .sort((a, b) => b.count - a.count);
+
+    res.json({
+      success: true,
+      data: finalData,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
