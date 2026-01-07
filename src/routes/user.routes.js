@@ -1,11 +1,15 @@
 import { Router } from "express";
-import { deleteUser, getUsers } from "../controllers/user.controllers.js";
+import {
+  deleteUser,
+  getNewUsersTodayNumber,
+  getUsers,
+} from "../controllers/user.controllers.js";
 import { authorize, restrictTo } from "../middlewares/auth.middleware.js";
 
 const userRoute = Router();
 
 userRoute.get("/", authorize, restrictTo("admin"), getUsers);
+userRoute.get("/stats/new-users", authorize, restrictTo("admin"), getNewUsersTodayNumber);
 userRoute.delete("/:id", authorize, restrictTo("admin"), deleteUser);
-// router.put("/:id", updateAccount);
 
 export default userRoute;

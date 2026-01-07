@@ -284,3 +284,45 @@ export const getBookmarkedArticles = async (req, res) => {
     res.status(500).json({ message: "Server error fetching bookmarks" });
   }
 };
+
+export const getCrawledArticlesNumber = async (req, res, next) => {
+  try {
+    const now = new Date();
+    const startOfToday = new Date(now.setHours(0, 0, 0, 0));
+
+    // Count the number of articles that have been crawled today
+    const todayCount = await Article.countDocuments({
+      scrapedAt: { $gte: startOfToday },
+    });
+
+    res.json({
+      success: true,
+      data: {
+        todayTotal: todayCount,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getSummarizedArticlesNumber = async (req, res, next) => {
+  try {
+    const now = new Date();
+    const startOfToday = new Date(now.setHours(0, 0, 0, 0));
+
+    const todayGenerated = await Article.countDocuments({
+      "summary.status": "completed",
+      "summary.generatedAt": { $gte: startOfToday },
+    });
+
+    res.json({
+      success: true,
+      data: {
+        todayCount: todayGenerated,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
