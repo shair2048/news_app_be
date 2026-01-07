@@ -73,3 +73,24 @@ export const deleteUser = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getNewUsersTodayNumber = async (req, res, next) => {
+  try {
+    const now = new Date();
+    const startOfToday = new Date(now.setHours(0, 0, 0, 0));
+
+    const newUsersToday = await User.countDocuments({
+      createdAt: { $gte: startOfToday },
+      role: "user",
+    });
+
+    res.json({
+      success: true,
+      data: {
+        newUsersToday: newUsersToday,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};

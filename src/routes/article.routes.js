@@ -8,8 +8,10 @@ import {
   getLatestArticles,
   summarizeArticle,
   checkBookmarkStatus,
+  getCrawledArticlesNumber,
+  getSummarizedArticlesNumber,
 } from "../controllers/article.controllers.js";
-import { authorize } from "../middlewares/auth.middleware.js";
+import { authorize, restrictTo } from "../middlewares/auth.middleware.js";
 
 const articleRoute = Router();
 
@@ -18,6 +20,18 @@ articleRoute.get("/latest", getLatestArticles);
 articleRoute.get("/bookmarked", authorize, getBookmarkedArticles);
 articleRoute.get("/fetch/all", fetchArticlesData);
 articleRoute.post("/bookmark", authorize, toggleBookmark);
+articleRoute.get(
+  "/stats/crawled-articles",
+  authorize,
+  restrictTo("admin"),
+  getCrawledArticlesNumber
+);
+articleRoute.get(
+  "/stats/summarized-articles",
+  authorize,
+  restrictTo("admin"),
+  getSummarizedArticlesNumber
+);
 articleRoute.get("/bookmark/status/:id", authorize, checkBookmarkStatus);
 articleRoute.get("/:id", getArticleById);
 articleRoute.post("/:id/summarize", summarizeArticle);
