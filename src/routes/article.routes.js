@@ -10,6 +10,7 @@ import {
   checkBookmarkStatus,
   getCrawledArticlesNumber,
   getSummarizedArticlesNumber,
+  getArticlesBySourceStats,
 } from "../controllers/article.controllers.js";
 import { authorize, restrictTo } from "../middlewares/auth.middleware.js";
 
@@ -31,6 +32,12 @@ articleRoute.get(
   authorize,
   restrictTo("admin"),
   getSummarizedArticlesNumber
+);
+articleRoute.get(
+  "/stats/sources",
+  authorize,
+  restrictTo("admin"),
+  getArticlesBySourceStats
 );
 articleRoute.get("/bookmark/status/:id", authorize, checkBookmarkStatus);
 articleRoute.get("/:id", getArticleById);
