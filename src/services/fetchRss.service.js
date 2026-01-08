@@ -47,6 +47,7 @@ export async function crawlRssAndStore({
     processed: 0,
     created: 0,
     skippedExisting: 0,
+    skippedNoImage: 0,
     errors: [],
   };
 
@@ -123,11 +124,17 @@ export async function crawlRssAndStore({
             if (metaDate) publishedAt = new Date(metaDate);
           }
         } catch (err) {
-          console.error(`Lỗi parse HTML ${articleUrl}:`, err.message);
+          console.error(`Failed to parse HTML ${articleUrl}:`, err.message);
           result.errors.push({
             url: articleUrl,
             error: "HTML Fetch Error: " + err.message,
           });
+          continue;
+        }
+
+        if (!imageUrl || imageUrl.trim() === "") {
+          console.log(`No image: ${articleUrl}`);
+          result.skippedNoImage++;
           continue;
         }
 
