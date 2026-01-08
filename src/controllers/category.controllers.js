@@ -145,3 +145,62 @@ export const checkFollowStatus = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getCategoriesStats = async (req, res, next) => {
+  try {
+    const totalArticles = await Article.countDocuments();
+
+    if (totalArticles === 0) {
+      return res.json({
+        success: true,
+        data: [],
+        total: 0,
+      });
+    }
+
+    const stats = await Article.aggregate([
+      {
+        $group: {
+          _id: "$category_id",
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "_id",
+          foreignField: "_id",
+          as: "categoryInfo",
+        },
+      },
+      {
+        $unwind: {
+          path: "$categoryInfo",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          categoryName: { $ifNull: ["$categoryInfo.name", "Uncategorized"] },
+          count: 1,
+        },
+      },
+      { $sort: { count: -1 } },
+    ]);
+
+    const result = stats.map((item) => ({
+      categoryName: item.categoryName,
+      value: item.count,
+      percentage: ((item.count / totalArticles) * 100).toFixed(2),
+    }));
+
+    res.json({
+      success: true,
+      total: totalArticles,
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
