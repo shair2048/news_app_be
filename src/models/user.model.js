@@ -24,6 +24,13 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "admin"],
       default: "user",
     },
+    avatar: {
+      type: String,
+      default: function () {
+        if (!this.name) return undefined;
+        return `https://ui-avatars.com/api/?name=${encodeURIComponent(this.name)}`;
+      },
+    },
     bookmarks: [
       {
         type: mongoose.Schema.Types.ObjectId,

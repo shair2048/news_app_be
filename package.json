@@ -15,6 +15,7 @@
   "description": "",
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@liveblocks/node": "^3.12.1",
     "@putout/plugin-convert-commonjs-to-esm": "^10.0.1",
     "axios": "^1.13.2",
     "bcrypt": "^6.0.0",

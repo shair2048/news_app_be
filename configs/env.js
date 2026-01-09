@@ -10,4 +10,5 @@ export const {
   GEMINI_API_KEY,
   JWT_SECRET,
   JWT_EXPIRES_IN,
+  LIVEBLOCKS_SECRET_KEY,
 } = process.env;
