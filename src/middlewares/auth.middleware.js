@@ -50,3 +50,45 @@ export const restrictTo = (...roles) => {
     next();
   };
 };
+
+export const optionalAuthorize = async (req, res, next) => {
+  try {
+    let token;
+
+    if (req.cookies && req.cookies.token) {
+      token = req.cookies.token;
+    } else if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer")
+    ) {
+      token = req.headers.authorization.split(" ")[1];
+    }
+
+    if (!token) {
+      req.user = null;
+      return next();
+    }
+
+    const blacklistedToken = await Blacklist.findOne({ token });
+    if (blacklistedToken) {
+      req.user = null;
+      return next();
+    }
+
+    const decoded = jwt.verify(token, JWT_SECRET);
+
+    const user = await User.findById(decoded.userId);
+
+    if (!user) {
+      req.user = null;
+      return next();
+    }
+
+    req.user = user;
+    req.token = token;
+    next();
+  } catch {
+    req.user = null;
+    next();
+  }
+};

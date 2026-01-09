@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { authorize } from "../middlewares/auth.middleware.js";
+import { optionalAuthorize } from "../middlewares/auth.middleware.js";
 import {
   authenticateLiveblocks,
   resolveUsers,
@@ -7,7 +7,7 @@ import {
 
 const liveblocksRoute = Router();
 
-liveblocksRoute.post("/auth", authorize, authenticateLiveblocks);
-liveblocksRoute.post("/resolve-users", authorize, resolveUsers);
+liveblocksRoute.post("/auth", optionalAuthorize, authenticateLiveblocks);
+liveblocksRoute.post("/resolve-users", resolveUsers);
 
 export default liveblocksRoute;
